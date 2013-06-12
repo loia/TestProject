@@ -1,25 +1,67 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.alanloi</groupId>
-  <artifactId>TestProject</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <artifactId>github-mvnrepo-example</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
   <scm>
-    <connection>scm:git:https://github.com/loia/TestProject.git</connection>
-    <developerConnection>scm:git:https://github.com/loia/TestProject.git</developerConnection>
+    <connection>scm:git:https://github.com/loia/github-mvnrepo-example.git</connection>
+    <developerConnection>scm:git:https://github.com/loia/github-mvnrepo-example.git</developerConnection>
   </scm>
 
   <distributionManagement>
     <repository>
       <id>github.loia</id>
-      <name>Internal Repository</name>
-      <url>https://github.com/loia/mvn-repo/raw/master</url>
+      <name>Internal Release Repository</name>
+      <url>https://raw.github.com/loia/mvn-repo</url>
     </repository>
     <snapshotRepository>
       <id>github.loia.snapshot</id>
       <name>Internal Snapshot Repository</name>
-      <url>https://github.com/loia/mvn-repo-snapshot/raw/master</url>
+      <url>https://raw.github.com/loia/mvn-repo-snapshot</url>
       <uniqueVersion>true</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
-</project>
+
+  <properties>
+    <!-- github server corresponds to entry in ~/.m2/settings.xml -->
+    <github.global.server>github</github.global.server>
+  </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <altDeploymentRepository>local-repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+        </configuration>
+      </plugin>
+        <plugin>
+            <groupId>com.github.github</groupId>
+            <artifactId>site-maven-plugin</artifactId>
+            <version>0.8</version>
+            <configuration>
+                <message>Maven artifacts for ${project.build.finalName}</message>
+                <noJekyll>true</noJekyll>
+                <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+                <branch>refs/heads/master</branch>
+                <includes>
+                  <include>**/*</include>
+                </includes>
+                <!-- TODO this technique only supports a single repo - so can't have separate release/snapshot repos -->
+                <repositoryName>mvn-repo</repositoryName>
+                <repositoryOwner>loia</repositoryOwner>
+            </configuration>
+            <executions>
+              <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
+              <execution>
+                <goals>
+                  <goal>site</goal>
+                </goals>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build></project>
