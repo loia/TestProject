@@ -11,9 +11,15 @@
 
   <distributionManagement>
     <repository>
-      <id>alanloi</id>
+      <id>github.loia</id>
       <name>Internal Repository</name>
       <url>https://github.com/loia/mvn-repo/raw/master</url>
     </repository>
+    <snapshotRepository>
+      <id>github.loia.snapshot</id>
+      <name>Internal Snapshot Repository</name>
+      <url>https://github.com/loia/mvn-repo-snapshot/raw/master</url>
+      <uniqueVersion>true</uniqueVersion>
+    </snapshotRepository>
   </distributionManagement>
 </project>
